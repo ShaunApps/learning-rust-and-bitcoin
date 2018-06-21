@@ -1,118 +1,44 @@
 extern crate sha2;
 use sha2::{Sha256, Digest};
-use std::ops::{Add, Sub, Mul};
+pub mod field_element;
+use std::env;
 
-#[derive(PartialEq, Eq, Debug)]
-struct FieldElement { 
-    num: i32,
-    prime: i32,
-}
 
-impl FieldElement {
-    fn new(num: i32, prime: i32) -> FieldElement {
-        if num < 0 || num >= prime { panic!("num should be between 0 and {}-1", prime) }
-        FieldElement { num: num, prime: prime }
-    }
-}
+fn get_address_and_fetch() -> Result<String, &'static str> {
 
-impl Add for FieldElement {
-    type Output = FieldElement;
+    let mut url: String = "http://blockchain.info/rawaddr/".to_owned();
 
-    fn add(self, other: FieldElement) -> FieldElement {
-        if self.prime != other.prime { panic!("both numbers need to be in same field")}
-        let result = (self.num + other.num) % self.prime;
-        FieldElement { num: result, prime: self.prime }
-    }
-}
-
-impl Sub for FieldElement {
-    type Output = FieldElement;
-
-    fn sub(self, other: FieldElement) -> FieldElement {
-        if self.prime != other.prime { panic!("both numbers need to be in same field")}
-        let mut result = (self.num - other.num) % self.prime;
-        if result < 0 {
-            result = result + self.prime;
+    let address = match env::args().nth(2) {
+        Some(address) => address,
+        None => {
+            return Err("Usage: address <address>");
         }
-        FieldElement { num: result, prime: self.prime }
-    }
+    };
+    url.push_str(&address);
+    println!("{}", url);
+    Ok(url)
 }
 
-// impl Mul for FieldElement {
-//     type Output = FieldElement;
-
-//     fn mul(self, other: FieldElement) -> FieldElement {
-//         if self.prime != other.prime { panic!("both numbers need to be in same field")}
-//         let result = (self.num * other.num) % self.prime
-//         FieldElement { num: result, prime: self.prime }
-//     }
-// }
 
 
-// fn sha256_string(s) -> {
-//     let mut hasher = Sha256::default();
-//     // write input message
-//     hasher.input(s);
-
-//     // read hash digest and consume hasher
-//     hasher.result();
-// }
-    
 fn main() {
+    get_address_and_fetch();
     
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn sha256_hello_world_test() {
-    //     hasher.input_str("hello world");
-
-    //     sha256_string()
+    #[test]
+    fn sha256_hello_world_test() {
+        let mut hasher = Sha256::default();
+        hasher.input("hello world".as_bytes());
+        let hash = hasher.result();
     
-    //     assert_eq!(output[..], [0xb9, 0x4d, 0x27, 0xb9, 0x93, 0x4d, 0x3e, 0x08,
-    //                             0xa5, 0x2e, 0x52, 0xd7, 0xda, 0x7d, 0xab, 0xfa,
-    //                             0xc4, 0x84, 0xef, 0xe3, 0x7a, 0x53, 0x80, 0xee,
-    //                             0x90, 0x88, 0xf7, 0xac, 0xe2, 0xef, 0xcd, 0xe9]);
-
-    // }
-
-    #[test]
-    fn field_element_new_test() {
-        let a = FieldElement::new(7, 13);
-        let b = FieldElement { num: 7, prime: 13 };
-        assert_eq!(a, b);
+        assert_eq!(hash[..], [0xb9, 0x4d, 0x27, 0xb9, 0x93, 0x4d, 0x3e, 0x08,
+                                0xa5, 0x2e, 0x52, 0xd7, 0xda, 0x7d, 0xab, 0xfa,
+                                0xc4, 0x84, 0xef, 0xe3, 0x7a, 0x53, 0x80, 0xee,
+                                0x90, 0x88, 0xf7, 0xac, 0xe2, 0xef, 0xcd, 0xe9]);
     }
-
-    #[test]
-    fn field_element_add_test() {
-        let a = FieldElement::new(7, 13);
-        let b = FieldElement::new(8, 13);
-        let c = a + b;
-        assert_eq!(c.num, 2);
-    }
-
-    #[test]
-    fn field_element_sub_test() {
-        let a = FieldElement::new(7, 13);
-        let b = FieldElement::new(8, 13);
-        let c = a - b;
-        assert_eq!(c.num, 12);
-    }
-
-    #[test]
-    fn field_element_sub2_test() {
-        let a = FieldElement::new(9, 13);
-        let b = FieldElement::new(3, 13);
-        let c = a - b;
-        assert_eq!(c.num, 6);
-    }
-
-
-
-
-
 
 }
