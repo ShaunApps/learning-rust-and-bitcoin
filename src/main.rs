@@ -1,28 +1,91 @@
 extern crate sha2;
+extern crate hyper;
+extern crate serde_json;
+
+#[macro_use]
+extern crate serde_derive;
+
+use serde_json::{Value, Error};
+
 use sha2::{Sha256, Digest};
-pub mod field_element;
 use std::env;
+use hyper::rt::{self, Future, Stream};
+
+pub mod utxos;
+pub mod field_element;
+
+use std::fs::File;
+use std::path::Path;
+use std::io::prelude::*;
 
 
-fn get_address_and_fetch() -> Result<String, &'static str> {
+/// ConfirmationCache as bool.
+#[derive(Deserialize, Debug)]
+struct ConfirmationCache(bool);
+impl Default for ConfirmationCache {
+    fn default() -> Self {
+        ConfirmationCache(false)
+    }
+}
 
-    let mut url: String = "http://blockchain.info/rawaddr/".to_owned();
+#[derive(Deserialize, Debug)]
+struct UTXO {
+    address: String,
+    txid: String,
+    vout: u8,
+    ts: i32,
+    scriptPubKey: String,
+    amount: f64,
+    confirmations: u8,
 
-    let address = match env::args().nth(2) {
-        Some(address) => address,
-        None => {
-            return Err("Usage: address <address>");
-        }
-    };
-    url.push_str(&address);
-    println!("{}", url);
-    Ok(url)
+    #[serde(default)]
+    confirmationsFromCache: ConfirmationCache,
 }
 
 
-
 fn main() {
-    get_address_and_fetch();
+   // uses hyper to GET blockchain.info API with address and return body
+//    rt::run(utxos::fetch_utxos(utxos::get_address().unwrap()));
+
+// let mut data = File::open("utxo.json").unwrap();
+// let mut contents = String::new();
+//     data.read_to_string(&mut contents)
+//         .expect("something went wrong reading the file");
+
+//     println!("With text:\n{}", contents);
+
+
+let data = r#"[
+                {
+                    "address": "n2PuaAguxZqLddRbTnAoAuwKYgN2w2hZk7",
+                    "txid": "dbfdc2a0d22a8282c4e7be0452d595695f3a39173bed4f48e590877382b112fc",
+                    "vout": 0,
+                    "ts": 1401276201,
+                    "scriptPubKey": "76a914e50575162795cd77366fb80d728e3216bd52deac88ac",
+                    "amount": 0.001,
+                    "confirmations": 3
+                    },
+                    {
+                    "address": "n2PuaAguxZqLddRbTnAoAuwKYgN2w2hZk7",
+                    "txid": "e2b82af55d64f12fd0dd075d0922ee7d6a300f58fe60a23cbb5831b31d1d58b4",
+                    "vout": 0,
+                    "ts": 1401226410,
+                    "scriptPubKey": "76a914e50575162795cd77366fb80d728e3216bd52deac88ac",
+                    "amount": 0.001,
+                    "confirmations": 6,
+                    "confirmationsFromCache": true
+                }
+
+            ]"#;
+
+    let json: Vec<UTXO> =
+        serde_json::from_str(data).expect("JSON was not well-formatted");
+
+    for i in &json {
+        println!("test utxo ts: {:?}\n", i.ts);
+    }
+
+
     
 }
 #[cfg(test)]
