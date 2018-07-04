@@ -13,6 +13,7 @@ use hyper::rt::{self, Future, Stream};
 
 pub mod utxos;
 pub mod field_element;
+pub mod ecc;
 
 use std::fs::File;
 use std::path::Path;
@@ -42,6 +43,19 @@ struct UTXO {
     confirmationsFromCache: ConfirmationCache,
 }
 
+// takes json string data, deserializes it,
+// sorts by ts and returns it
+fn parse_and_sort_utxos_by_date(utxos: &str) -> Vec<UTXO> {
+    let mut json: Vec<UTXO> =
+        serde_json::from_str(utxos).expect("JSON was not well-formatted");
+    json.sort_by(|a, b| a.ts.cmp(&b.ts));
+    json
+}
+
+// fn find_range(utxos: Vec<UTXO>, x: f64) -> (i32, i32) {
+
+// }
+
 
 fn main() {
    // uses hyper to GET blockchain.info API with address and return body
@@ -53,6 +67,8 @@ fn main() {
 //         .expect("something went wrong reading the file");
 
 //     println!("With text:\n{}", contents);
+
+    
 
 
 let data = r#"[
@@ -71,17 +87,46 @@ let data = r#"[
                     "vout": 0,
                     "ts": 1401226410,
                     "scriptPubKey": "76a914e50575162795cd77366fb80d728e3216bd52deac88ac",
-                    "amount": 0.001,
+                    "amount": 0.05,
+                    "confirmations": 6,
+                    "confirmationsFromCache": true
+                },
+                {
+                    "address": "n2PuaAguxZqLddRbTnAoAuwKYgN2w2hZk7",
+                    "txid": "e2b82af55d64f12fd0dd075d0922ee7d6a300f58fe60a23cbb5831b31d1d58b4",
+                    "vout": 1,
+                    "ts": 1301226440,
+                    "scriptPubKey": "76a914e50575162795cd77366fb80d728e3216bd52deac88ac",
+                    "amount": 0.00134,
+                    "confirmations": 6,
+                    "confirmationsFromCache": true
+                },
+                {
+                    "address": "n2PuaAguxZqLddRbTnAoAuwKYgN2w2hZk7",
+                    "txid": "e2b82af55d64f12fd0dd075d0922ee7d6a300f58fe60a23cbb5831b31d1d58b4",
+                    "vout": 2,
+                    "ts": 1351226440,
+                    "scriptPubKey": "76a914e50575162795cd77366fb80d728e3216bd52deac88ac",
+                    "amount": 0.0031,
                     "confirmations": 6,
                     "confirmationsFromCache": true
                 }
 
             ]"#;
 
-    let json: Vec<UTXO> =
-        serde_json::from_str(data).expect("JSON was not well-formatted");
+    // let mut json: Vec<UTXO> =
+    //     serde_json::from_str(data).expect("JSON was not well-formatted");
 
-    for i in &json {
+    
+    // json.sort_by(|a, b| a.ts.cmp(&b.ts));
+    // for i in &mut json {
+    //     println!("test utxo ts: {:?}\n", i.ts);
+    // }
+
+
+    let mut sorted_json = parse_and_sort_utxos_by_date(data);
+
+    for i in &mut sorted_json {
         println!("test utxo ts: {:?}\n", i.ts);
     }
 
