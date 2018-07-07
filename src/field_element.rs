@@ -1,13 +1,13 @@
-use std::ops::{Add, Sub, Mul};
+use std::ops::{Add, Sub, Mul, Div};
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct FieldElement { 
-    pub num: i32,
-    pub prime: i32,
+    pub num: u32,
+    pub prime: u32,
 }
 
 impl FieldElement {
-    pub fn new(num: i32, prime: i32) -> FieldElement {
+    pub fn new(num: u32, prime: u32) -> FieldElement {
         if num < 0 || num >= prime { panic!("num should be between 0 and {}-1", prime) }
         FieldElement { num: num, prime: prime }
     }
@@ -46,9 +46,22 @@ impl Mul for FieldElement {
     }
 }
 
-// TODO: implement Exp and Div for FieldElement
+// TODO: implement Exp FieldElement
 
+// we use Fermat's Little Theorem for division
+impl Div for FieldElement {
+    type Output = Self;
 
+    fn div(self, other: FieldElement) -> FieldElement {
+        if self.prime != other.prime { panic!("both numbers need to be in same field")}
+        let exp_prime_minus_two = (other.num.pow(self.prime - 2)) as u64;
+        let num = self.num as u64;
+        let prime = self.prime as u64;
+        // let fermattted_num = (self.num * exp_prime_minus_two) % self.prime;
+        let fermattted_num = ((num * exp_prime_minus_two) % prime) as u32;
+        FieldElement::new(fermattted_num, self.prime)
+    }
+}
 
 
 
@@ -94,6 +107,22 @@ mod tests {
         let b = FieldElement::new(3, 13);
         let c = a * b;
         assert_eq!(c.num, 1);
+    }
+
+    #[test]
+    fn field_element_div_test() {
+        let a = FieldElement::new(2, 19);
+        let b = FieldElement::new(3, 19);
+        let c = a / b;
+        assert_eq!(c.num, 7);
+    }
+
+    #[test]
+    fn field_element_div2_test() {
+        let a = FieldElement::new(11, 19);
+        let b = FieldElement::new(2, 19);
+        let c = a / b;
+        assert_eq!(c.num, 15);
     }
 
 }
