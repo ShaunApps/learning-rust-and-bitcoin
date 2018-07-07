@@ -11,6 +11,13 @@ impl FieldElement {
         if num < 0 || num >= prime { panic!("num should be between 0 and {}-1", prime) }
         FieldElement { num: num, prime: prime }
     }
+
+    // Couldn't find a `**` operator for Rust, so exponentiation is a function
+    pub fn exp(self, other: FieldElement) -> FieldElement {
+        if self.prime != other.prime { panic!("both numbers need to be in same field")}
+        let exp_num = (self.num.pow(other.num)) % self.prime;
+        FieldElement::new(exp_num, self.prime)
+    }
 }
 
 impl Add for FieldElement {
@@ -57,7 +64,6 @@ impl Div for FieldElement {
         let exp_prime_minus_two = (other.num.pow(self.prime - 2)) as u64;
         let num = self.num as u64;
         let prime = self.prime as u64;
-        // let fermattted_num = (self.num * exp_prime_minus_two) % self.prime;
         let fermattted_num = ((num * exp_prime_minus_two) % prime) as u32;
         FieldElement::new(fermattted_num, self.prime)
     }
@@ -123,6 +129,14 @@ mod tests {
         let b = FieldElement::new(2, 19);
         let c = a / b;
         assert_eq!(c.num, 15);
+    }
+
+    #[test]
+    fn field_element_exp_test() {
+        let a = FieldElement::new(3, 19);
+        let b = FieldElement::new(3, 19);
+        let c = a.exp(b);
+        assert_eq!(c.num, 8);
     }
 
 }
