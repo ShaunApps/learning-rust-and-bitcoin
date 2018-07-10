@@ -53,8 +53,6 @@ impl Mul for FieldElement {
     }
 }
 
-// TODO: implement Exp FieldElement
-
 // we use Fermat's Little Theorem for division
 impl Div for FieldElement {
     type Output = Self;
