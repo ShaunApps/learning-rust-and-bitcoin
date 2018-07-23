@@ -1,4 +1,10 @@
+/// the below is for general elliptic curves that satisfy the equation:
+/// y2=x3+ax+b
+
+// TODO: refactor Point so that it takes in Field Elements
+
 use std::ops::{Add};
+use field_element::{FieldElement};
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct Point {
@@ -11,13 +17,13 @@ pub struct Point {
 impl Point {
     pub fn new(x: Option<i32>, y: Option<i32>, a: i32, b: i32) -> Point {
         // maybe add case where x,y is point at infinity (None for Rust?)
-        if x == None && y == None { () }
+        let none: Option<i32> = None;
+        if x == none && y == none { () }
         if y.unwrap().pow(2) != (x.unwrap().pow(3) + (a * x.unwrap()) + b) { panic!("Point {}, {} is not on the curve where a,b = {},{}", x.unwrap(),y.unwrap(),a,b) }
         Point { x: x, y: y, a: a, b: b }
     }
 }
 
-// TODO: implement Point addition
 impl Add for Point {
     type Output = Self;
 
@@ -66,7 +72,8 @@ mod tests {
 
     #[test]
     fn test_add0(){
-        let p1 = Point::new(None, None, 5, 7);
+        // this test is currently failing, issues with dealing with `None`
+        let p1 = Point::new(none, none, 5, 7);
         let p2 = Point::new(Some(2), Some(5), 5, 7);
         let p3 = Point::new(Some(2), Some(5), 5, 7);
         
@@ -85,6 +92,19 @@ mod tests {
         // assert_eq!(p1 + p2, p3);
         // assert_eq!(p2 + p1, p3);
         assert_eq!(p1 + p2, p3);
+
+    }
+
+    #[test]
+    fn comb_point_ecc0(){
+        let a = FieldElement::new(1, 2);
+        // let p1 = Point::new(Some(3), Some(7), 5, 7);
+        // let p2 = Point::new(Some(-1), Some(-1), 5, 7);
+        // let p3 = Point::new(Some(2), Some(-5), 5, 7);
+        
+        // assert_eq!(p1 + p2, p3);
+        // assert_eq!(p2 + p1, p3);
+        assert_eq!(a, FieldElement{ num: 1, prime: 2 });
 
     }
 

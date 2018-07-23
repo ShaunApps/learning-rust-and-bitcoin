@@ -20,53 +20,18 @@ use std::path::Path;
 use std::io::prelude::*;
 
 
-/// ConfirmationCache as bool.
-#[derive(Deserialize, Debug)]
-struct ConfirmationCache(bool);
-impl Default for ConfirmationCache {
-    fn default() -> Self {
-        ConfirmationCache(false)
-    }
-}
-
-#[derive(Deserialize, Debug)]
-struct UTXO {
-    address: String,
-    txid: String,
-    vout: u8,
-    ts: i32,
-    scriptPubKey: String,
-    amount: f64,
-    confirmations: u8,
-
-    #[serde(default)]
-    confirmationsFromCache: ConfirmationCache,
-}
-
-// takes json string data, deserializes it,
-// sorts by ts and returns it
-fn parse_and_sort_utxos_by_date(utxos: &str) -> Vec<UTXO> {
-    let mut json: Vec<UTXO> =
-        serde_json::from_str(utxos).expect("JSON was not well-formatted");
-    json.sort_by(|a, b| a.ts.cmp(&b.ts));
-    json
-}
-
-// fn find_range(utxos: Vec<UTXO>, x: f64) -> (i32, i32) {
-
-// }
 
 
 fn main() {
    // uses hyper to GET blockchain.info API with address and return body
-//    rt::run(utxos::fetch_utxos(utxos::get_address().unwrap()));
+    //    rt::run(utxos::fetch_utxos(utxos::get_address().unwrap()));
 
-// let mut data = File::open("utxo.json").unwrap();
-// let mut contents = String::new();
-//     data.read_to_string(&mut contents)
-//         .expect("something went wrong reading the file");
+    // let mut data = File::open("utxo.json").unwrap();
+    // let mut contents = String::new();
+    //     data.read_to_string(&mut contents)
+    //         .expect("something went wrong reading the file");
 
-//     println!("With text:\n{}", contents);
+    //     println!("With text:\n{}", contents);
 
     
 
@@ -124,11 +89,11 @@ let data = r#"[
     // }
 
 
-    let mut sorted_json = parse_and_sort_utxos_by_date(data);
+    // let mut sorted_json = parse_and_sort_utxos_by_date(data);
 
-    for i in &mut sorted_json {
-        println!("test utxo ts: {:?}\n", i.ts);
-    }
+    // for i in &mut sorted_json {
+    //     println!("test utxo ts: {:?}\n", i.ts);
+    // }
 
 
     

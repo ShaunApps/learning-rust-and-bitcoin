@@ -2,12 +2,12 @@ use std::ops::{Add, Sub, Mul, Div};
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct FieldElement { 
-    pub num: u32,
-    pub prime: u32,
+    pub num: i32,
+    pub prime: i32,
 }
 
 impl FieldElement {
-    pub fn new(num: u32, prime: u32) -> FieldElement {
+    pub fn new(num: i32, prime: i32) -> FieldElement {
         if num < 0 || num >= prime { panic!("num should be between 0 and {}-1", prime) }
         FieldElement { num: num, prime: prime }
     }
@@ -15,7 +15,9 @@ impl FieldElement {
     // Couldn't find a `**` operator for Rust, so exponentiation is a function
     pub fn exp(self, other: FieldElement) -> FieldElement {
         if self.prime != other.prime { panic!("both numbers need to be in same field")}
-        let exp_num = (self.num.pow(other.num)) % self.prime;
+        let num: i32 = self.num;
+        let other = other.num as u32;
+        let exp_num = (num.pow(other) % self.prime);
         FieldElement::new(exp_num, self.prime)
     }
 }
@@ -59,10 +61,9 @@ impl Div for FieldElement {
 
     fn div(self, other: FieldElement) -> FieldElement {
         if self.prime != other.prime { panic!("both numbers need to be in same field")}
-        let exp_prime_minus_two = (other.num.pow(self.prime - 2)) as u64;
-        let num = self.num as u64;
-        let prime = self.prime as u64;
-        let fermattted_num = ((num * exp_prime_minus_two) % prime) as u32;
+        let prime = self.prime as u32;
+        let exp_prime_minus_two = (other.num.pow(prime - 2)) as i32;
+        let fermattted_num = ((self.num * exp_prime_minus_two) % self.prime) as i32;
         FieldElement::new(fermattted_num, self.prime)
     }
 }
