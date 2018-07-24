@@ -13,7 +13,7 @@ use hyper::rt::{self, Future, Stream};
 
 pub mod utxos;
 pub mod field_element;
-pub mod ecc;
+pub mod elliptic_curves;
 
 use std::fs::File;
 use std::path::Path;
