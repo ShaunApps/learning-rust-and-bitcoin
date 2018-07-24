@@ -72,7 +72,6 @@ mod tests {
 
     #[test]
     fn test_add0(){
-        // this test is currently failing, issues with dealing with `None`
         let p1 = Point::new(0, 0, 5, 7);
         let p2 = Point::new(2, 5, 5, 7);
         let p3 = Point::new(2, 5, 5, 7);
@@ -98,12 +97,6 @@ mod tests {
     #[test]
     fn comb_point_ecc0(){
         let a = FieldElement::new(1, 2);
-        // let p1 = Point::new(Some(3), Some(7), 5, 7);
-        // let p2 = Point::new(Some(-1), Some(-1), 5, 7);
-        // let p3 = Point::new(Some(2), Some(-5), 5, 7);
-        
-        // assert_eq!(p1 + p2, p3);
-        // assert_eq!(p2 + p1, p3);
         assert_eq!(a, FieldElement{ num: 1, prime: 2 });
 
     }

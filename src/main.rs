@@ -22,18 +22,7 @@ use std::io::prelude::*;
 
 
 
-fn main() {
-   // uses hyper to GET blockchain.info API with address and return body
-    //    rt::run(utxos::fetch_utxos(utxos::get_address().unwrap()));
-
-    // let mut data = File::open("utxo.json").unwrap();
-    // let mut contents = String::new();
-    //     data.read_to_string(&mut contents)
-    //         .expect("something went wrong reading the file");
-
-    //     println!("With text:\n{}", contents);
-
-    
+fn main() {    
 
 
 let data = r#"[
@@ -78,22 +67,6 @@ let data = r#"[
                 }
 
             ]"#;
-
-    // let mut json: Vec<UTXO> =
-    //     serde_json::from_str(data).expect("JSON was not well-formatted");
-
-    
-    // json.sort_by(|a, b| a.ts.cmp(&b.ts));
-    // for i in &mut json {
-    //     println!("test utxo ts: {:?}\n", i.ts);
-    // }
-
-
-    // let mut sorted_json = parse_and_sort_utxos_by_date(data);
-
-    // for i in &mut sorted_json {
-    //     println!("test utxo ts: {:?}\n", i.ts);
-    // }
 
 
     
